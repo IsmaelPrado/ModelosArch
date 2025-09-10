@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Podcast Player - Estilo Spotify</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Helvetica Neue', sans-serif;
+      padding-bottom: 80px; /* espacio para el footer fijo */
+      background-color: #000000; /* fondo negro total */
+      color: white;
+    }
+
+    /* Sidebar tipo Spotify */
+.sidebar {
+  position: fixed; /* siempre visible */
+  left: 0;
+  top: 0;
+  height: 100vh; /* ocupa toda la altura */
+  width: 450px;
+  background-color: #121212; /* negro Spotify */
+  color: #b3b3b3;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.7);
+  overflow-y: auto; /* scroll si hay mucho contenido */
+  z-index: 999;
+}
+
+/* Header del sidebar */
+.sidebar-header h2 {
+  color: #ffffff; /* texto blanco */
+  font-size: 20px;
+  margin-bottom: 16px;
+
+}
+
+/* Contenedor del contenido */
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* espacio entre cards */
+}
+
+/* Cards de cada modelo */
+.model-card {
+  background-color: #1f1f1f; /* gris oscuro */
+  padding: 12px 14px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  color: #ffffff; /* texto blanco */
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+}
+
+.model-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.7);
+}
+
+.model-card h3 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.model-card p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #ffffff;
+}
+
+/* Scrollbar estilizado */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #555; /* gris para scrollbar */
+  border-radius: 3px;
+}
+.sidebar::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+
+   .footer-player {
+  position: fixed;       /* fijo en la parte inferior */
+  bottom: 0;             /* pegado al fondo */
+  left: 0;               /* inicio de la pantalla */
+  width: 100%;           /* ocupa todo el ancho */
+  height: 80px;
+  background-color: #181818; /* gris muy oscuro tipo Spotify */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;         /* mayor que el sidebar (que tiene 999) */
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.5); /* opcional, para profundidad */
+}
+
+    .audio-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #404040;
+      border-radius: 2px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .progress-filled {
+      height: 100%;
+      background: #1db954;
+      width: 0%;
+    }
+
+
+    main {
+      max-width: 1200px;
+      margin-left: 440px; /* ancho del sidebar + margen */
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* ✅ GRADIENTE VERDE SPOTIFY - OCUPA 100% ANCHO Y ALTO */
+   /* ✅ GRADIENTE VERDE SPOTIFY - OCUPA 100% ANCHO Y ALTO */
+.hero-gradient {
+  height: 400px;
+  background: linear-gradient(135deg, #441db9, #431373, #000);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Empieza desde la izquierda */
+  padding-left: 5%; /* Espacio a la izquierda para respirar */
+  margin-left: 460px;
+
+}
+
+/* Contenedor que agrupa imagen + texto */
+.album-container {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* Espacio entre imagen y texto */
+  max-width: 1200px; /* Para no estirarse demasiado en pantallas grandes */
+}
+
+/* Imagen del álbum */
+.album-cover img {
+  width: 250px; /* Tamaño Spotify-like */
+  height: 250px;
+  border-radius: 8px; /* Opcional: esquinas redondeadas como Spotify */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); /* Sombra suave */
+}
+
+/* Información del álbum (título y artista) */
+.album-info {
+  color: white;
+  text-align: left;
+}
+
+/* Título más grande */
+.album-title {
+  font-size: 3.5rem; /* ¡Más grande! Ajusta según necesites */
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.1;
+}
+
+/* Nombre del artista */
+.artist-name {
+  font-size: 1.5rem;
+  font-weight: 400;
+  opacity: 0.9;
+  margin: 0;
+}
+ 
+
+    /* Lista de canciones estilo Spotify */
+    .song-list {
+      background: #121212;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .song-header {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: #1e1e1e;
+      color: #ddd;
+      font-size: 0.9rem;
+    }
+
+
+    .song-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #2d2d2d;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      color: #fff;
+    }
+
+    .song-item:hover {
+      background: #1e1e1e;
+    }
+
+    .song-number {
+      width: 30px;
+      color: #aaa;
+    }
+
+     .song-title {
+      font-size: 1rem;
+      margin-left: 1rem;
+      font-weight: 500;
+    }
+
+    .song-duration {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-left: auto;
+    }
+
+    /* Botones de control */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: #1e1e1e;
+    }
+
+    .play-btn {
+      background: #1db954;
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .play-btn:hover {
+      background: #2bcb64;
+    }
+
+    .add-btn {
+      background: transparent;
+      border: 1px solid #444;
+      color: #fff;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .more-btn {
+      background: transparent;
+      border: none;
+      color: #aaa;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+/* --- Modal overlay centrado --- */
+.modal {
+  display: none; /* oculto por defecto */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* importante para que flex funcione */
+  display: flex;
+  align-items: center; /* centra vertical */
+  justify-content: center; /* centra horizontal */
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+  padding: 20px;
+}
+.modal.open {
+  display: flex;
+}
+
+/* --- Contenido del modal tipo Spotify --- */
+.modal-content {
+  background: #121212; /* negro Spotify */
+  width: 100%;
+  max-width: 600px;
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+  position: relative;
+  color: #fff;
+  animation: fadeInUp 0.3s ease;
+  transform: translateY(0); /* asegura animación correcta */
+}
+
+
+/* Botón de cierre */
+.close-btn {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  border: 0;
+  background: transparent;
+  font-size: 24px;
+  cursor: pointer;
+  color: #b3b3b3;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: #fff;
+}
+
+/* Título */
+.modal-title {
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Texto */
+.modal-text {
+  margin: 10px 0;
+  color: #b3b3b3;
+  line-height: 1.5;
+}
+
+/* Lista */
+.modal-list {
+  margin: 12px 0 0 20px;
+  color: #e5e5e5;
+}
+.modal-list li {
+  margin-bottom: 6px;
+}
+.modal-list strong {
+  color: #1DB954; /* verde spotify */
+}
+
+/* Animación suave */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .album-title {
+        font-size: 2.5rem;
+      }
+      .song-header,
+      .song-item {
+        padding: 0.8rem;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+    <!-- ✅ GRADIENTE DE FONDO OCUPANDO 100% ANCHO -->
+<div class="hero-gradient">
+  <div class="album-container">
+    <div class="album-cover">
+      <img src="./assets/album.jpeg" alt="Modelo-Vista-Controlador" />
+    </div>
+    <div class="album-info">
+      <h1 class="album-title">Modelos Arquitectónicos</h1>
+      <p class="artist-name">Modelo-Vista-Controlador</p>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar tipo Spotify -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Modelos Arquitectónicos</h2>
+  </div>
+  <div class="sidebar-content">
+
+    <!-- Card MVC -->
+    <div class="model-card">
+      <h3>MVC</h3>
+      <p>
+        Modelo-Vista-Controlador: separa la aplicación en Modelo, Vista y Controlador para mayor mantenibilidad y testeo.
+      </p>
+    </div>
+
+    <!-- Card MVP -->
+    <div class="model-card">
+      <h3>MVP</h3>
+      <p>
+        Modelo-Vista-Presentador: mejora la separación entre la UI y la lógica de presentación, facilitando pruebas unitarias.
+      </p>
+    </div>
+
+    <!-- Card MVVM -->
+    <div class="model-card">
+      <h3>MVVM</h3>
+      <p>
+        Modelo-Vista-ViewModel: introduce un ViewModel que actúa como intermediario entre la UI y la lógica de negocio.
+      </p>
+    </div>
+
+    <!-- Card Clean Architecture -->
+    <div class="model-card">
+      <h3>Clean Architecture</h3>
+      <p>
+        Organiza el software en capas independientes, permitiendo cambios en la UI o la base de datos sin afectar la lógica de negocio.
+      </p>
+    </div>
+
+  </div>
+</aside>
+
+
+<main>
+
+      <!-- Controles -->
+    <div class="controls">
+      <button class="play-btn"><i class="fas fa-play"></i></button>
+      <button class="add-btn"><i class="fas fa-plus"></i></button>
+      <button class="more-btn"><i class="fas fa-ellipsis-h"></i></button>
+    </div>
+
+
+   <!-- Lista de canciones -->
+<div class="song-list">
+  <div class="song-header">
+    <span>#</span>
+    <span>Título</span>
+  </div>
+
+
+
+  <!-- Canción MVC -->
+  <div class="song-item" onclick="openModal('mvc')">
+    <span class="song-number">1</span>
+    <span class="song-title">Modelo-Vista-Controlador</span>
+    <span class="song-duration">3:25</span>
+  </div>
+
+  <!-- Canción MVP -->
+  <div class="song-item" onclick="openModal('mvp')">
+    <span class="song-number">2</span>
+    <span class="song-title">Modelo-Vista-Presentador</span>
+    <span class="song-duration">4:10</span>
+  </div>
+
+    <!-- Canción MVVM -->
+  <div class="song-item" onclick="openModal('mvvm')">
+    <span class="song-number">3</span>
+    <span class="song-title">Modelo-Vista-ViewModel (MVVM)</span>
+    <span class="song-duration">3:50</span>
+  </div>
+
+  <!-- Canción Clean Architecture -->
+  <div class="song-item" onclick="openModal('clean')">
+    <span class="song-number">4</span>
+    <span class="song-title">Clean Architecture</span>
+    <span class="song-duration">5:00</span>
+  </div>
+</div>
+
+
+<!-- Modal Reutilizable -->
+<div id="infoModal" class="modal">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeModal()">&times;</button>
+
+    <!-- Imagen del modelo -->
+    <img id="modalImage" src="" alt="Imagen modelo" style="width:100%; max-height:200px; object-fit:cover; border-radius:10px; margin-bottom:16px;">
+
+    <h2 id="modalTitle" class="modal-title"></h2>
+    <p id="modalDescription" class="modal-text"></p>
+    <ul id="modalList" class="modal-list"></ul>
+    <p id="modalExtra" class="modal-text"></p>
+  </div>
+</div>
+
+  </main>
+
+  <script>
+    // Contenido dinámico para cada modelo
+const modalData = {
+  mvc: {
+    title: "Modelo-Vista-Controlador (MVC)",
+    description: "MVC es un patrón de arquitectura de software que separa una aplicación en tres componentes principales:",
+    list: [
+      "<strong>Modelo:</strong> Maneja los datos, la lógica de negocio y las reglas de la aplicación.",
+      "<strong>Vista:</strong> Es la interfaz de usuario que presenta los datos al usuario.",
+      "<strong>Controlador:</strong> Gestiona la interacción del usuario, actualiza el modelo y selecciona la vista a mostrar."
+    ],
+    extra: "Este patrón ayuda a separar responsabilidades, facilitando mantenimiento, escalabilidad y pruebas unitarias.",
+    image: "./assets/mvc.jpeg"
+  },
+  mvp: {
+    title: "Modelo-Vista-Presentador (MVP)",
+    description: "MVP es una variación del patrón MVC que busca mejorar la separación entre la lógica de presentación y la interfaz gráfica:",
+    list: [
+      "<strong>Modelo:</strong> Se encarga de los datos y la lógica de negocio.",
+      "<strong>Vista:</strong> Muestra los datos pero es más pasiva, solo recibe instrucciones del presentador.",
+      "<strong>Presentador:</strong> Actúa como intermediario: recibe la entrada del usuario, actualiza el modelo y le dice a la vista qué mostrar."
+    ],
+    extra: "MVP es común en aplicaciones de escritorio y móviles, ya que permite testear más fácilmente la lógica de presentación.",
+    image: "./assets/mvp.png"
+  },
+  mvvm: {
+    title: "Modelo-Vista-ViewModel (MVVM)",
+    description: "MVVM separa la interfaz y la lógica de presentación usando un ViewModel:",
+    list: [
+      "<strong>Modelo:</strong> Maneja los datos y la lógica de negocio.",
+      "<strong>Vista:</strong> Solo muestra la UI y recibe eventos del usuario.",
+      "<strong>ViewModel:</strong> Intermediario que expone datos y comandos de la vista."
+    ],
+    extra: "MVVM es muy usado en aplicaciones móviles y de escritorio modernas (WPF, Android, iOS).",
+    image: "./assets/mvvm.png"
+  },
+  clean: {
+    title: "Clean Architecture",
+    description: "Clean Architecture organiza el software en capas independientes para mayor mantenibilidad:",
+    list: [
+      "<strong>Entities:</strong> Lógica de negocio pura.",
+      "<strong>Use Cases:</strong> Reglas de aplicación.",
+      "<strong>Interface Adapters:</strong> Adaptadores para UI, DB o APIs.",
+      "<strong>Frameworks & Drivers:</strong> Librerías y detalles externos."
+    ],
+    extra: "Permite cambios en la UI o base de datos sin afectar la lógica de negocio.",
+    image: "./assets/clean.png"
+  }
+};
+
+
+// Función para abrir modal con datos dinámicos
+function openModal(type) {
+  const data = modalData[type];
+
+  document.getElementById("modalTitle").innerHTML = data.title;
+  document.getElementById("modalDescription").innerHTML = data.description;
+  document.getElementById("modalList").innerHTML = data.list.map(item => `<li>${item}</li>`).join("");
+  document.getElementById("modalExtra").innerHTML = data.extra;
+
+    document.getElementById("modalImage").src = data.image;
+
+  document.getElementById("infoModal").style.display = "block";
+}
+
+// Cerrar modal
+function closeModal() {
+  document.getElementById("infoModal").style.display = "none";
+}
+
+
+  </script>
+
+
+  <!-- Footer fijo tipo Spotify -->
+  <footer class="footer-player fixed bottom-0 left-0 right-0 flex items-center px-6">
+    <div class="flex items-center gap-4">
+      <img src="./assets/podcast.png" alt="Podcast Cover" class="w-16 h-16 rounded"/>
+      <div>
+        <p class="font-semibold">Modelos Arquitectónicos</p>
+        <p class="text-sm text-gray-400">Episodio Destacado</p>
+      </div>
+    </div>
+
+    <div class="flex-1 mx-6 flex flex-col justify-center">
+      <div class="audio-control">
+        <button id="prev" class="text-2xl"><i class="fa-solid fa-backward-step"></i></button>
+        <button id="playPause" class="text-2xl"><i class="fa-solid fa-play"></i></button>
+        <button id="next" class="text-2xl"><i class="fa-solid fa-forward-step"></i></button>
+      </div>
+      <div class="progress-bar mt-2" id="progressBar">
+        <div class="progress-filled" id="progressFilled"></div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <span id="currentTime" class="text-sm text-gray-400">0:00</span>
+      <span id="duration" class="text-sm text-gray-400">0:00</span>
+    </div>
+
+    <audio id="audio" src="./assets/podcast.mpga"></audio>
+  </footer>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const playPauseBtn = document.getElementById('playPause');
+    const progressBar = document.getElementById('progressBar');
+    const progressFilled = document.getElementById('progressFilled');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    audio.addEventListener('timeupdate', () => {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progressFilled.style.width = percent + '%';
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+      durationEl.textContent = formatTime(audio.duration);
+    });
+
+    playPauseBtn.addEventListener('click', () => {
+      if(audio.paused){
+        audio.play();
+        playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+      } else {
+        audio.pause();
+        playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+      }
+    });
+
+    progressBar.addEventListener('click', (e) => {
+      const width = progressBar.clientWidth;
+      const clickX = e.offsetX;
+      const duration = audio.duration;
+      audio.currentTime = (clickX / width) * duration;
+    });
+  </script>
+
+</body>
+</html>
